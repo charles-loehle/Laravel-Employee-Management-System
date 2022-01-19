@@ -1,0 +1,143 @@
+@extends('admin.layouts.master')
+
+@section('content')
+<div class="container mt-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+        <li class="breadcrumb-item active" aria-current="page">
+            Register employee   
+        </li>
+        </ol>
+    </nav>
+    @if (Session::has('message'))
+        <div class="alert alert-success">
+            {{ Session::get('message') }}
+        </div>
+    @endif
+
+    <form action="{{ route('users.store') }}" method="post" enctype="multipart/form-data">
+        @csrf
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">General Information</div>
+                    <div class="card-body">
+                        {{-- Name --}}
+                        <div class="mb-3">
+                            <label class="form-label">First Name</label>
+                            <input type="text" name="firstname" class="form-control @error('firstname') is-valid @enderror" required="">
+                            @error('firstname')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                        {{-- Last Name --}}
+                        <div class="mb-3">
+                            <label class="form-label">Last Name</label>
+                            <input type="text" name="lastname" class="form-control @error('lastname') is-valid @enderror" required="">
+                            @error('lastname')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                        {{-- Address --}}
+                        <div class="mb-3">
+                            <label class="form-label">Address</label>
+                            <input type="text" name="address" class="form-control">
+                        </div>
+                        {{-- mobile --}}
+                        <div class="mb-3">
+                            <label class="form-label">Mobile Number</label>
+                            <input type="number" name="mobile_number" class="form-control">
+                        </div>
+                        {{-- Department --}}
+                        <div class="mb-3">
+                            <label class="form-label">Department</label>
+                            <select 
+                                name="department_id" 
+                                class="form-control" 
+                                required=""
+                            >
+                                @foreach (App\Models\Department::all() as $department)
+                                    <option value="{{ $department->id }}">
+                                        {{ $department->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        {{-- designation --}}
+                        <div class="mb-3">
+                            <label class="form-label">Designation</label>
+                            <input type="text" name="designation" class="form-control @error('designation') is-valid @enderror" required="">
+                            @error('designation')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                        {{-- start date --}}
+                        <div class="mb-3">
+                            <label class="form-label">Start Date</label>
+                            <input type="date" name="start_from" class="form-control" placeholder="dd-mm-yyyy" required="" id="datepicker">
+                            @error('start_from')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                        {{-- image --}}
+                        <div class="mb-3">
+                            <label class="form-label">Image</label>
+                            <input type="file" name="image" class="form-control @error('image') is-valid @enderror" accept="image/*">
+                            @error('image')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        Login Information
+                    </div>
+                    <div class="card-body">
+                        {{-- email --}}
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" name="email" class="form-control @error('email') is-valid @enderror" required="">
+                            @error('email')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                        {{-- password --}}
+                        <div class="mb-3">
+                            <label class="form-label">Password</label>
+                            <input type="password" name="password" class="form-control" required="">
+                        </div>
+                        {{-- role --}}
+                        <div class="mb-3">
+                            <label class="form-label">Role</label>
+                            <select name="role_id"required="" class="form-control">
+                                @foreach (App\Models\Role::all() as $role)
+                                    <option value="{{ $role->id }}">{{ $role->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="mb-3">
+                    <button class="btn btn-primary" type="submit">Submit</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+@endsection
