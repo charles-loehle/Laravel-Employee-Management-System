@@ -24,12 +24,12 @@
 <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.js"></script>
 <script>
   $( function() {
-    $( "#datepicker" ).datepicker();
+    $( "#datepicker" ).datepicker({dateFormat: 'yy-mm-dd'}).val();
   } );
   </script>
 	  <script>
 			$( function() {
-				$( "#datepicker1" ).datepicker();
+				$( "#datepicker1" ).datepicker({dateFormat: 'yy-mm-dd'}).val();
 			} );
 			</script>
 </body>

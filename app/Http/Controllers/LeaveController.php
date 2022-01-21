@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Leave;
 use Illuminate\Http\Request;
 
 class LeaveController extends Controller
@@ -13,7 +14,9 @@ class LeaveController extends Controller
      */
     public function index()
     {
-        //
+        $leaves = Leave::latest()->get();
+
+        return view("admin.leave.index", compact("leaves"));
     }
 
     /**
@@ -23,7 +26,11 @@ class LeaveController extends Controller
      */
     public function create()
     {
-        //
+        $leaves = Leave::latest()
+            ->where("user_id", auth()->user()->id)
+            ->get();
+
+        return view("admin.leave.create", compact("leaves"));
     }
 
     /**
@@ -34,7 +41,25 @@ class LeaveController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+            "from" => "required",
+            "to" => "required",
+            "description" => "required",
+            "type" => "required",
+        ]);
+
+        // get all request data from form
+        $data = $request->all();
+        $data["user_id"] = auth()->user()->id;
+        $data["message"] = "";
+        $data["status"] = 0;
+
+        // create a new leave object with all the data
+        Leave::create($data);
+
+        return redirect()
+            ->back()
+            ->with("message", "Leave created");
     }
 
     /**
@@ -56,7 +81,9 @@ class LeaveController extends Controller
      */
     public function edit($id)
     {
-        //
+        $leave = Leave::find($id);
+
+        return view("admin.leave.edit", compact("leave"));
     }
 
     /**
@@ -68,7 +95,27 @@ class LeaveController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $this->validate($request, [
+            "from" => "required",
+            "to" => "required",
+            "description" => "required",
+            "type" => "required",
+        ]);
+
+        // get all request data from form
+        $data = $request->all();
+        // find a leave by id
+        $leave = Leave::find($id);
+        $data["user_id"] = auth()->user()->id;
+        $data["message"] = "";
+        $data["status"] = 0;
+
+        // update single leave object by id
+        $leave->update($data);
+
+        return redirect()
+            ->route("leaves.create")
+            ->with("message", "Leave updated");
     }
 
     /**
@@ -79,6 +126,24 @@ class LeaveController extends Controller
      */
     public function destroy($id)
     {
-        //
+        // find a leave by id and delete
+        Leave::find($id)->delete();
+
+        return redirect()
+            ->route("leaves.create")
+            ->with("message", "Leave request deleted");
+    }
+
+    public function acceptReject(Request $request, $id)
+    {
+        $status = $request->status;
+        $message = $request->message;
+        $leave = Leave::find($id);
+
+        $leave->update(["status" => $status, "message" => $message]);
+
+        return redirect()
+            ->route("leaves.index")
+            ->with("message", "Leave request processed");
     }
 }
